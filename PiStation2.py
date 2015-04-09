@@ -3,33 +3,6 @@
 import os, argparse
 current_dir = os.system("pwd") #Shows current directory
 
-def findpifm():
-    base = "/home/pi"
-    target = "pifm"
-    global pifm_path
-    for root, dirs, files in os.walk(base):
-        if target in files:
-            pifm_path = os.path.join(root, target)
-            return
-
-
-def movepifm(): #If PiFM is in a different directory, it copies it to the 'pi' folder
-    if pifm_path == "/home/pi":
-        exit()
-    else:
-        os.system("cp " + pifm_path + " /home/pi")
-
-def changedir(): #Changes directory to /home/pi if you're not there already
-    if current_dir == "/home/pi":
-        exit()
-    else:
-        os.system("cd /home/pi")
-
-findpifm()
-movepifm()
-
-
-
 HEADER = '\033[95m'
 OKBLUE = '\033[94m'
 OKGREEN = '\033[92m'
@@ -70,8 +43,8 @@ def find_type(Song_Path):
 def Station_Selector():
     freq = None
     while 87.1 >= freq >= 108.2:
-		print "Please enter your Frequency, anywhere between 87.1 and 108.2"
-		freq = float(raw_input("> "))
+        print "Please enter your Frequency, anywhere between 87.1 and 108.2"
+        freq = float(raw_input("> "))
     try:
         loading()
         if Song_type == "001": #MP3 File
@@ -79,9 +52,12 @@ def Station_Selector():
         elif Song_type == "002": #WAV FILE
             os.system("sudo ./pifm " + SongPath + " " + str(freq) + " 22050 stereo")
     except Exception:
-		print ""
-		exit()
-        
+        print "There was an exception. Halting."
+        exit()
+
+parser = argparse.ArgumentParser(prog='python PiStation.py', description='Broadcasts WAV/MP3 file over FM using RPI GPIO #4 pin.')
+
+
 def main():
     os.system('clear')
     print ("Welcome to ImPiFM!  \nVersion 1.0 \nGPLv3 License")
@@ -100,4 +76,4 @@ def main():
     Station_Selector()
     
 if __name__ == '__main__':
-	main()
+    main()
