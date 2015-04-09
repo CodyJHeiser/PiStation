@@ -1,24 +1,7 @@
-import os, time
+#!/bin/python
+
+import os, argparse
 current_dir = os.system("pwd") #Shows current directory
-
-def loading(): #Loading for show (you can comment out if you want to)
-    print "loading"
-    clear(.3,0)
-    print "loading."
-    clear(.3,0)
-    print "loading.."
-    clear(.3,0)
-    print "loading..."
-    clear(.3,0)
-    print "loading"
-    clear(.3,0)
-    print "loading."
-    clear(.3,0)
-    print "loading.."
-    clear(.3,0)
-    print "loading..."
-    clear(.3,0)
-
 
 def findpifm():
     base = "/home/pi"
@@ -26,7 +9,6 @@ def findpifm():
     global pifm_path
     for root, dirs, files in os.walk(base):
         if target in files:
-            time.sleep(0.3)
             pifm_path = os.path.join(root, target)
             return
 
@@ -47,15 +29,15 @@ findpifm()
 movepifm()
 
 
-class bcolors: #colors used in findfiles (below)
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
+
+HEADER = '\033[95m'
+OKBLUE = '\033[94m'
+OKGREEN = '\033[92m'
+WARNING = '\033[93m'
+FAIL = '\033[91m'
+ENDC = '\033[0m'
+BOLD = '\033[1m'
+UNDERLINE = '\033[4m'
 
 
 def findfiles(filename):
@@ -64,22 +46,14 @@ def findfiles(filename):
     global SongPath
     for root, dirs, files in os.walk(base):
         if target in files:
-            time.sleep(0.3)
             print "File Found!"
             SongPath = os.path.join(root, target)
             return
         else:
-            SongPath = "Sorry the file, " + bcolors.WARNING + SongName + bcolors.ENDC + " doesn\'t seem to exist" #holding a value (required)
+            SongPath = "Sorry the file, " + WARNING + SongName + ENDC + " doesn\'t seem to exist" #holding a value (required)
             #You can un-commnet 'SongPath' here (below), but it repeats a coulple of times when searching
             #print SongPath
             SongPath = "0"
-
-
-def clear(t1, t2):
-    time.sleep(t1)
-    os.system("clear")
-    time.sleep(t2)
-
 
 def find_type(Song_Path):
     global Song_type
@@ -94,46 +68,36 @@ def find_type(Song_Path):
 
 
 def Station_Selector():
-    print "Please enter your Frequency, anywhere between 87.1 and 108.2"
-    freq = float(raw_input())
-    if freq <=  87.1 :
-        print "\nPlease keep the frequency above 87.1"
-        quit()
-    elif freq >= 108.2 :
-        print "\nPlease keep the frequency below 108.1"
-        quit()
-    else:
+    freq = None
+    while 87.1 >= freq >= 108.2:
+		print "Please enter your Frequency, anywhere between 87.1 and 108.2"
+		freq = float(raw_input("> "))
+    try:
         loading()
         if Song_type == "001": #MP3 File
             os.system("ffmpeg -i " + SongPath + " -f s16le -ar 22.05k -ac 1 - | sudo ./pifm - " + str(freq))
         elif Song_type == "002": #WAV FILE
             os.system("sudo ./pifm " + SongPath + " " + str(freq) + " 22050 stereo")
-        elif Song_type == "003":
-            print "There was a strange error!  Please re-download the program and try again!  \nIf the problem persist, contact me at CodyJHeiser@gmail.com"
-            clear(1.4,0)
-            raw_input("press any key to continue")
-            exit()
-        else:
-            print"There was a strange error!  Please re-download the program and try again!  \nIf the problem persist, contact me at CodyJHeiser@gmail.com"
-            clear(1.4,0)
-            raw_input("press any key to continue")
-            exit()
+    except Exception:
+		print ""
+		exit()
         
 def main():
-    clear(0,0)
-    print ("Welcome to PiFM!  \nVersion 2.1 \nGPLv3 License")
-    clear(1.3,0)
+    os.system('clear')
+    print ("Welcome to ImPiFM!  \nVersion 1.0 \nGPLv3 License")
+    os.system('clear')
     print ("Enter the file you would like to play here! \nWatch Capitalization!")
     global SongName
     SongName = raw_input("\n")
-    time.sleep(0.3)
+
     findfiles(SongName)
     if SongPath == "0":
-        clear(.4,.8)
+        os.system('clear')
         print "Sorry, couldn\'t find your file!  Please try again!"
         exit()
-    clear(0.8,0)
+    os.system('clear')
     find_type(SongPath)
     Station_Selector()
     
-main()
+if __name__ == '__main__':
+	main()
